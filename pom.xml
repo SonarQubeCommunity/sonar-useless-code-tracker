@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.codehaus.sonar-plugins</groupId>
+    <artifactId>parent</artifactId>
+    <version>6</version>
+    <relativePath>../parent</relativePath>
+  </parent>
+
+  <artifactId>sonar-useless-code-tracker-plugin</artifactId>
+  <name>Sonar Useless Code Tracker Plugin</name>
+  <packaging>sonar-plugin</packaging>
+  <version>0.3-SNAPSHOT</version>
+  <description>Find duplicated source code within project.</description>
+
+  <inceptionYear>2010</inceptionYear>
+  <url>http://docs.codehaus.org/display/SONAR/Useless+Code+Tracker</url>
+  <organization>
+    <name>SonarSource</name>
+    <url>http://www.sonarsource.com</url>
+  </organization>
+  <licenses>
+    <license>
+      <name>GNU LGPL 3</name>
+      <url>http://www.gnu.org/licenses/lgpl.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>ogaudin</id>
+      <name>Olivier Gaudin</name>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:svn:http://svn.codehaus.org/sonar-plugins/trunk/useless-code-tracker</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/sonar-plugins/trunk/useless-code-tracker</developerConnection>
+    <url>http://svn.codehaus.org/sonar-plugins</url>
+  </scm>
+  <issueManagement>
+    <system>JIRA</system>
+    <url>http://jira.codehaus.org/browse/SONARPLUGINS/component/14556</url>
+  </issueManagement>
+
+  <properties>
+    <sonar.pluginKey>groovy</sonar.pluginKey>
+    <sonar.pluginName>Groovy</sonar.pluginName>
+    <sonar.pluginClass>org.sonar.plugins.uselesscodetracker.TrackerPlugin</sonar.pluginClass>
+    <sonar.version>2.3</sonar.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>pmd</groupId>
+      <artifactId>pmd</artifactId>
+      <version>4.2.5</version>
+      <exclusions>
+        <exclusion>
+          <groupId>jaxen</groupId>
+          <artifactId>jaxen</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>ant</groupId>
+          <artifactId>ant</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-duplications</artifactId>
+      <version>${sonar.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-plugin-api</artifactId>
+      <version>${sonar.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-testing-harness</artifactId>
+      <version>${sonar.version}</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.codehaus.sonar</groupId>
+          <artifactId>sonar-packaging-maven-plugin</artifactId>
+          <version>0.3</version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+</project>
