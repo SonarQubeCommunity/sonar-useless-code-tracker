@@ -25,8 +25,8 @@ import org.sonar.api.web.RubyRailsWidget;
 public class TrackerWidget extends AbstractRubyTemplate implements RubyRailsWidget {
   @Override
   protected String getTemplatePath() {
-    return "/Users/holly/Documents/dev/sonar-plugins/useless-code-tracker/src/main/resources/org/sonar/plugins/uselesscodetracker/tracker.erb";
-//    return "/org/sonar/plugins/uselesscodetracker/tracker.erb";
+    //return "/Users/holly/Documents/dev/sonar-plugins/useless-code-tracker/src/main/resources/org/sonar/plugins/uselesscodetracker/tracker.erb";
+    return "/org/sonar/plugins/uselesscodetracker/tracker.erb";
   }
 
   public String getId() {

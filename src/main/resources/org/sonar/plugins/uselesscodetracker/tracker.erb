@@ -8,7 +8,7 @@
       <td valign="top">
         <div class="dashbox">
           <p class="title">Useless Code</p>
-          <p><span class="big"><%= format_measure(useless_code)%></span></p>
+          <p><span class="big"><%= format_measure(useless_code)%></span><%= tendency_icon('total-useless-lines') %></p>
           <p><%= format_measure(measure('useless-duplicated-lines'), :suffix => ' duplicated',:url => url_for_drilldown('duplicated_lines'), :default => '0 duplicated')%><%= tendency_icon('useless-duplicated-lines') %></p>
         </div>
       </td>
