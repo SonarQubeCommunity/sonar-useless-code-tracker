@@ -22,6 +22,8 @@ package org.sonar.plugins.uselesscodetracker;
 import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Metric;
 import org.sonar.api.measures.Metrics;
+import org.sonar.api.measures.SumChildValuesFormula;
+import org.sonar.squid.measures.SumAggregationFormula;
 
 import java.util.Arrays;
 import java.util.List;
@@ -29,9 +31,13 @@ import java.util.List;
 public class TrackerMetrics implements Metrics {
 
   public static final Metric USELESS_DUPLICATED_LINES = new Metric("useless-duplicated-lines", "Useless Duplicated LInes",
-    "Number of dupliciated lines that could be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false, CoreMetrics.DOMAIN_SIZE);
+    "Number of duplicated lines that could be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
+    CoreMetrics.DOMAIN_SIZE).setFormula(new SumChildValuesFormula(false));
+
+  public static final Metric TOTAL_USELESS_LINES = new Metric("total-useless-lines", "Total Useless Code",
+    "Number of lines that can be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false, CoreMetrics.DOMAIN_SIZE);
 
   public List<Metric> getMetrics() {
-    return Arrays.asList(USELESS_DUPLICATED_LINES);
+    return Arrays.asList(USELESS_DUPLICATED_LINES, TOTAL_USELESS_LINES);
   }
 }

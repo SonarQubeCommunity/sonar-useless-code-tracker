@@ -19,35 +19,21 @@
  */
 package org.sonar.plugins.uselesscodetracker;
 
-import org.sonar.api.*;
-import org.sonar.plugins.uselesscodetracker.decorator.TotalDecorator;
+import org.sonar.api.web.AbstractRubyTemplate;
+import org.sonar.api.web.RubyRailsWidget;
 
-import java.util.ArrayList;
-import java.util.List;
+public class TrackerWidget extends AbstractRubyTemplate implements RubyRailsWidget {
+  @Override
+  protected String getTemplatePath() {
+    return "/Users/holly/Documents/dev/sonar-plugins/useless-code-tracker/src/main/resources/org/sonar/plugins/uselesscodetracker/tracker.erb";
+//    return "/org/sonar/plugins/uselesscodetracker/tracker.erb";
+  }
 
-@Properties({
-})
-public class TrackerPlugin implements Plugin {
-
-  public String getKey() {
+  public String getId() {
     return "useless-code-tracker";
   }
 
-  public String getName() {
+  public String getTitle() {
     return "Useless Code Tracker";
-  }
-
-  public String getDescription() {
-    return "Reports on source code that can be reduced.";
-  }
-
-  public List<Class<? extends Extension>> getExtensions() {
-    List<Class<? extends Extension>> list = new ArrayList<Class<? extends Extension>>();
-    list.add(TrackerSensor.class);
-    list.add(TrackerMetrics.class);
-    list.add(TrackerWidget.class);
-    list.add(TotalDecorator.class);
-
-    return list;
   }
 }
