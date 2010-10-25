@@ -21,6 +21,7 @@ package org.sonar.plugins.uselesscodetracker;
 
 import org.sonar.api.*;
 import org.sonar.plugins.uselesscodetracker.decorator.TotalDecorator;
+import org.sonar.plugins.uselesscodetracker.decorator.ViolationsDecorator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +48,7 @@ public class TrackerPlugin implements Plugin {
     list.add(TrackerMetrics.class);
     list.add(TrackerWidget.class);
     list.add(TotalDecorator.class);
+    list.add(ViolationsDecorator.class);
 
     return list;
   }

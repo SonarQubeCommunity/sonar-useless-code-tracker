@@ -26,6 +26,7 @@ import org.sonar.api.batch.DependsUpon;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.MeasureUtils;
 import org.sonar.api.measures.Metric;
+import org.sonar.api.resources.Java;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.resources.ResourceUtils;
@@ -38,7 +39,7 @@ public class TotalDecorator implements Decorator {
 
   @DependsUpon
   public List<Metric> dependsUpon() {
-    return Arrays.asList(TrackerMetrics.USELESS_DUPLICATED_LINES);
+    return Arrays.asList(TrackerMetrics.USELESS_DUPLICATED_LINES, TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE);
   }
 
   @DependedUpon
@@ -50,12 +51,17 @@ public class TotalDecorator implements Decorator {
     if( !ResourceUtils.isFile(resource) && ! ResourceUtils.isPackage(resource)){
       double lines = 0.0;
       double duplicated = MeasureUtils.getValue(context.getMeasure(TrackerMetrics.USELESS_DUPLICATED_LINES), 0.0);
-      lines += duplicated;
+      double deadCode = MeasureUtils.getValue(context.getMeasure(TrackerMetrics.DEAD_CODE), 0.0);
+      double potentialDeadCode = MeasureUtils.getValue(context.getMeasure(TrackerMetrics.POTENTIAL_DEAD_CODE), 0.0);
+      lines += duplicated + deadCode + potentialDeadCode;
       context.saveMeasure(TrackerMetrics.TOTAL_USELESS_LINES, lines);
     }
   }
 
   public boolean shouldExecuteOnProject(Project project) {
-    return true;
+    if(Java.INSTANCE.equals(project.getLanguage())) {
+      return true;
+    }
+    return false;
   }
 }

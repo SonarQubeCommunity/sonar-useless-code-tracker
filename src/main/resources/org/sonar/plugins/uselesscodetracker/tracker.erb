@@ -9,7 +9,9 @@
         <div class="dashbox">
           <p class="title">Useless Code</p>
           <p><span class="big"><%= format_measure(useless_code)%></span><%= tendency_icon('total-useless-lines') %></p>
-          <p><%= format_measure(measure('useless-duplicated-lines'), :suffix => ' duplicated',:url => url_for_drilldown('duplicated_lines'), :default => '0 duplicated')%><%= tendency_icon('useless-duplicated-lines') %></p>
+          <p><%= format_measure(measure('useless-duplicated-lines'), :suffix => ' lines in duplications',:url => url_for_drilldown('duplicated_lines'), :default => '0 duplicated')%><%= tendency_icon('useless-duplicated-lines') %></p>
+          <p><%= format_measure(measure('dead-code'), :suffix => ' lines in unused private methods',:url => url_for_drilldown('dead-code'), :default => '0 lines in unused private methods')%><%= tendency_icon('dead-code') %></p>
+          <p><%= format_measure(measure('potential-dead-code'), :suffix => ' lines in unused protected methods',:url => url_for_drilldown('potential-dead-code'), :default => '0 lines in unused protected methods')%><%= tendency_icon('potential-dead-code') %></p>
         </div>
       </td>
       <td valign="top">

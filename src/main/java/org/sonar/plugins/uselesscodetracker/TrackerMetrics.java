@@ -30,14 +30,26 @@ import java.util.List;
 
 public class TrackerMetrics implements Metrics {
 
-  public static final Metric USELESS_DUPLICATED_LINES = new Metric("useless-duplicated-lines", "Useless Duplicated LInes",
+  public static final Metric USELESS_DUPLICATED_LINES = new Metric("useless-duplicated-lines", "Useless Duplicated Lines",
     "Number of duplicated lines that could be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_SIZE).setFormula(new SumChildValuesFormula(false));
+    CoreMetrics.DOMAIN_DUPLICATION).setFormula(new SumChildValuesFormula(false));
+
+  public static final Metric DEAD_CODE = new Metric("dead-code", "Dead Code",
+    "Code that is not used and could be removed", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
+    CoreMetrics.DOMAIN_RULES);
+
+  public static final Metric POTENTIAL_DEAD_CODE = new Metric("potential-dead-code", "Potential Dead Code",
+    "Code that is potentially not used and could be removed", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
+    CoreMetrics.DOMAIN_RULES);
 
   public static final Metric TOTAL_USELESS_LINES = new Metric("total-useless-lines", "Total Useless Code",
     "Number of lines that can be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false, CoreMetrics.DOMAIN_SIZE);
 
   public List<Metric> getMetrics() {
-    return Arrays.asList(USELESS_DUPLICATED_LINES, TOTAL_USELESS_LINES);
+    return Arrays.asList(
+      USELESS_DUPLICATED_LINES,
+      TOTAL_USELESS_LINES,
+      DEAD_CODE,
+      POTENTIAL_DEAD_CODE);
   }
 }
