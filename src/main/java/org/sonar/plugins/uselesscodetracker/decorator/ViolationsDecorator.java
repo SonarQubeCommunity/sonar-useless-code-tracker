@@ -35,9 +35,7 @@ import org.sonar.squid.indexer.QueryByParent;
 import org.sonar.squid.indexer.QueryByType;
 import org.sonar.squid.text.Source;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @DependsUpon(DecoratorBarriers.END_OF_VIOLATIONS_GENERATION)
 public class ViolationsDecorator implements Decorator {
@@ -59,8 +57,15 @@ public class ViolationsDecorator implements Decorator {
   public void decorate(Resource resource, DecoratorContext context) {
 
     if (ResourceUtils.isFile(resource)) {
-      saveMeasure(resource, TrackerMetrics.DEAD_CODE, "UnusedPrivateMethod", context);
-      saveMeasure(resource, TrackerMetrics.POTENTIAL_DEAD_CODE, "UnusedProtectedMethod", context);
+      List<Rule> deadCodeRules = new ArrayList();
+      deadCodeRules.add(ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, "UnusedPrivateMethod"));
+      deadCodeRules.add(ruleFinder.findByKey(CoreProperties.PMD_PLUGIN, "UnusedPrivateMethod"));
+
+      List<Rule> potentialDeadCodeRules = new ArrayList();
+      deadCodeRules.add(ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, "UnusedProtectedMethod"));
+
+      saveMeasure(resource, TrackerMetrics.DEAD_CODE, context, deadCodeRules);
+      saveMeasure(resource, TrackerMetrics.POTENTIAL_DEAD_CODE, context, potentialDeadCodeRules);
     } else {
       for (Metric metric : dependsUpon()) {
         Double sum = 0.0;
@@ -72,18 +77,20 @@ public class ViolationsDecorator implements Decorator {
     }
   }
 
-  private void saveMeasure(Resource resource, Metric metric, String ruleKey, DecoratorContext context) {
+  private void saveMeasure(Resource resource, Metric metric, DecoratorContext context, List<Rule> rules) {
     Double sum = 0.0;
-    Rule rule = ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, ruleKey);
-    if (rulesProfile.getActiveRule(rule) != null) {
-      for (Violation violation : context.getViolations()) {
-        if (violation.getRule().equals(rule)) {
-          int lineId = violation.getLineId();
-          Collection<SourceCode> methods = squid.search(new QueryByParent(squid.search(convertToSquidKeyFormat((JavaFile) resource))), new QueryByType(SourceMethod.class));
 
-          for (SourceCode method : methods) {
-            if (method.getStartAtLine() == lineId) {
-              sum += (method.getEndAtLine() - method.getStartAtLine());
+    for (Rule rule : rules) {
+      if (rulesProfile.getActiveRule(rule) != null) {
+        for (Violation violation : context.getViolations()) {
+          if (violation.getRule().equals(rule)) {
+            int lineId = violation.getLineId();
+            Collection<SourceCode> methods = squid.search(new QueryByParent(squid.search(convertToSquidKeyFormat((JavaFile) resource))), new QueryByType(SourceMethod.class));
+
+            for (SourceCode method : methods) {
+              if (method.getStartAtLine() == lineId) {
+                sum += (method.getEndAtLine() - method.getStartAtLine() + 1);
+              }
             }
           }
         }
