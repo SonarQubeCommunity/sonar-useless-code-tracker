@@ -33,7 +33,6 @@ import org.sonar.squid.api.SourceCode;
 import org.sonar.squid.api.SourceMethod;
 import org.sonar.squid.indexer.QueryByParent;
 import org.sonar.squid.indexer.QueryByType;
-import org.sonar.squid.text.Source;
 
 import java.util.*;
 
@@ -50,34 +49,26 @@ public class ViolationsDecorator implements Decorator {
   }
 
   @DependedUpon
-  public List<Metric> dependsUpon() {
+  public List<Metric> dependedUpon() {
     return Arrays.asList(TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE);
   }
 
   public void decorate(Resource resource, DecoratorContext context) {
 
-    if (ResourceUtils.isFile(resource)) {
+    if (Resource.QUALIFIER_CLASS.equals(resource.getQualifier())) {
       List<Rule> deadCodeRules = new ArrayList();
       deadCodeRules.add(ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, "UnusedPrivateMethod"));
       deadCodeRules.add(ruleFinder.findByKey(CoreProperties.PMD_PLUGIN, "UnusedPrivateMethod"));
 
       List<Rule> potentialDeadCodeRules = new ArrayList();
-      deadCodeRules.add(ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, "UnusedProtectedMethod"));
+      potentialDeadCodeRules.add(ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, "UnusedProtectedMethod"));
 
-      saveMeasure(resource, TrackerMetrics.DEAD_CODE, context, deadCodeRules);
-      saveMeasure(resource, TrackerMetrics.POTENTIAL_DEAD_CODE, context, potentialDeadCodeRules);
-    } else {
-      for (Metric metric : dependsUpon()) {
-        Double sum = 0.0;
-        if (context.getMeasure(metric) == null) {
-          sum += MeasureUtils.sum(true, context.getChildrenMeasures(metric));
-          context.saveMeasure(new Measure(metric, sum));
-        }
-      }
+      saveFileMeasure(resource, TrackerMetrics.DEAD_CODE, context, deadCodeRules);
+      saveFileMeasure(resource, TrackerMetrics.POTENTIAL_DEAD_CODE, context, potentialDeadCodeRules);
     }
   }
 
-  private void saveMeasure(Resource resource, Metric metric, DecoratorContext context, List<Rule> rules) {
+  private void saveFileMeasure(Resource resource, Metric metric, DecoratorContext context, List<Rule> rules) {
     Double sum = 0.0;
 
     for (Rule rule : rules) {
@@ -100,9 +91,10 @@ public class ViolationsDecorator implements Decorator {
   }
 
   public boolean shouldExecuteOnProject(Project project) {
-    if (Java.INSTANCE.equals(project.getLanguage())) {
+    if(Java.INSTANCE.equals(project.getLanguage())) {
       return true;
     }
+
     return false;
   }
 

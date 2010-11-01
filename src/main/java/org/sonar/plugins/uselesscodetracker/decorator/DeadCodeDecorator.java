@@ -19,49 +19,54 @@
  */
 package org.sonar.plugins.uselesscodetracker.decorator;
 
-import org.sonar.api.batch.Decorator;
-import org.sonar.api.batch.DecoratorContext;
-import org.sonar.api.batch.DependedUpon;
-import org.sonar.api.batch.DependsUpon;
+import org.apache.commons.lang.StringUtils;
+import org.sonar.api.CoreProperties;
+import org.sonar.api.batch.*;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.MeasureUtils;
 import org.sonar.api.measures.Metric;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Java;
+import org.sonar.api.resources.JavaFile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
-import org.sonar.api.resources.ResourceUtils;
+import org.sonar.api.rules.Rule;
+import org.sonar.api.rules.RuleFinder;
+import org.sonar.api.rules.Violation;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
+import org.sonar.squid.api.SourceCode;
+import org.sonar.squid.api.SourceMethod;
+import org.sonar.squid.indexer.QueryByParent;
+import org.sonar.squid.indexer.QueryByType;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
-public class TotalDecorator implements Decorator {
-
-  @DependsUpon
-  public List<Metric> dependsUpon() {
-    return Arrays.asList(TrackerMetrics.USELESS_DUPLICATED_LINES, TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE);
-  }
+public class DeadCodeDecorator implements Decorator {
 
   @DependedUpon
-  public List<Metric> DependedUpon() {
-    return Arrays.asList(TrackerMetrics.TOTAL_USELESS_LINES);
+  public List<Metric> dependedUpon() {
+    return Arrays.asList(TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE);
   }
 
   public void decorate(Resource resource, DecoratorContext context) {
-    if (!ResourceUtils.isFile(resource) && !ResourceUtils.isPackage(resource)) {
-      double lines = 0.0;
-      Measure duplicated = context.getMeasure(TrackerMetrics.USELESS_DUPLICATED_LINES);
-      Measure deadCode = context.getMeasure(TrackerMetrics.DEAD_CODE);
-      Measure potentialDeadCode = context.getMeasure(TrackerMetrics.POTENTIAL_DEAD_CODE);
 
-      if (duplicated != null || deadCode != null || potentialDeadCode != null) {
-        lines += MeasureUtils.getValue(duplicated, 0.0) + MeasureUtils.getValue(deadCode, 0.0) + MeasureUtils.getValue(potentialDeadCode, 0.0);
-        context.saveMeasure(TrackerMetrics.TOTAL_USELESS_LINES, lines);
+    if (!Resource.QUALIFIER_CLASS.equals(resource.getQualifier())) {
+      for (Metric metric : dependedUpon()) {
+        Double measure = MeasureUtils.sum(false, context.getChildrenMeasures(metric));
+
+        if (measure != null) {
+          context.saveMeasure(metric, measure);
+        }
       }
     }
   }
-  
+
+
   public boolean shouldExecuteOnProject(Project project) {
     return true;
   }
+
 }

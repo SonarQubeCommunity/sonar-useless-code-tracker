@@ -47,6 +47,6 @@ public class DuplicationAnalyser {
       duplicated_lines += (match.getMarkCount() - 1) * match.getLineCount();
     }
 
-    context.saveMeasure(project, TrackerMetrics.USELESS_DUPLICATED_LINES, duplicated_lines);
+    context.saveMeasure(project, TrackerMetrics.TEMP_USELESS_DUPLICATED_LINES, duplicated_lines);
   }
 }

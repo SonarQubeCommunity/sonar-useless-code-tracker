@@ -20,6 +20,8 @@
 package org.sonar.plugins.uselesscodetracker;
 
 import org.sonar.api.*;
+import org.sonar.plugins.uselesscodetracker.decorator.DeadCodeDecorator;
+import org.sonar.plugins.uselesscodetracker.decorator.DuplicationsDecorator;
 import org.sonar.plugins.uselesscodetracker.decorator.TotalDecorator;
 import org.sonar.plugins.uselesscodetracker.decorator.ViolationsDecorator;
 
@@ -49,6 +51,8 @@ public class TrackerPlugin implements Plugin {
     list.add(TrackerWidget.class);
     list.add(TotalDecorator.class);
     list.add(ViolationsDecorator.class);
+    list.add(DuplicationsDecorator.class);
+    list.add(DeadCodeDecorator.class);
 
     return list;
   }
