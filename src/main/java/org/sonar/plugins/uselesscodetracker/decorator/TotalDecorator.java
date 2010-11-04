@@ -26,7 +26,6 @@ import org.sonar.api.batch.DependsUpon;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.MeasureUtils;
 import org.sonar.api.measures.Metric;
-import org.sonar.api.resources.Java;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
 import org.sonar.api.resources.ResourceUtils;
@@ -43,7 +42,7 @@ public class TotalDecorator implements Decorator {
   }
 
   @DependedUpon
-  public List<Metric> DependedUpon() {
+  public List<Metric> dependedUpon() {
     return Arrays.asList(TrackerMetrics.TOTAL_USELESS_LINES);
   }
 
@@ -55,7 +54,9 @@ public class TotalDecorator implements Decorator {
       Measure potentialDeadCode = context.getMeasure(TrackerMetrics.POTENTIAL_DEAD_CODE);
 
       if (duplicated != null || deadCode != null || potentialDeadCode != null) {
-        lines += MeasureUtils.getValue(duplicated, 0.0) + MeasureUtils.getValue(deadCode, 0.0) + MeasureUtils.getValue(potentialDeadCode, 0.0);
+        lines += MeasureUtils.getValue(duplicated, 0.0);
+        lines += MeasureUtils.getValue(deadCode, 0.0);
+        lines += MeasureUtils.getValue(potentialDeadCode, 0.0);
         context.saveMeasure(TrackerMetrics.TOTAL_USELESS_LINES, lines);
       }
     }

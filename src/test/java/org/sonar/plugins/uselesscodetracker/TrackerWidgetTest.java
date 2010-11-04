@@ -17,32 +17,19 @@
  * License along with Sonar; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
+
 package org.sonar.plugins.uselesscodetracker;
 
-import java.util.Iterator;
+import static org.hamcrest.Matchers.notNullValue;
+import static org.junit.Assert.assertThat;
 
-import org.sonar.api.batch.SensorContext;
-import org.sonar.api.resources.Project;
-import org.sonar.duplications.cpd.Match;
+import org.junit.Test;
 
-public class DuplicationAnalyser {
+public class TrackerWidgetTest {
 
-  private SensorContext context;
-  private Project project;
-
-  public DuplicationAnalyser(Project project, SensorContext context) {
-    this.project = project;
-    this.context = context;
-  }
-
-  public void analyse(Iterator<Match> matches) {
-    double duplicated_lines = 0.0;
-
-    while (matches.hasNext()) {
-      Match match = matches.next();
-      duplicated_lines += (match.getMarkCount() - 1) * match.getLineCount();
-    }
-
-    context.saveMeasure(project, TrackerMetrics.TEMP_USELESS_DUPLICATED_LINES, duplicated_lines);
+  @Test
+  public void testGetTemplatePath() {
+    String path = new TrackerWidget().getTemplatePath();
+    assertThat(getClass().getResource(path), notNullValue());
   }
 }
