@@ -12,7 +12,7 @@
   <artifactId>sonar-useless-code-tracker-plugin</artifactId>
   <name>Sonar Useless Code Tracker Plugin</name>
   <packaging>sonar-plugin</packaging>
-  <version>0.1</version>
+  <version>0.2-SNAPSHOT</version>
   <description>Find duplicated source code within project.</description>
 
   <inceptionYear>2010</inceptionYear>
@@ -37,9 +37,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/sonar-plugins/tags/sonar-useless-code-tracker-plugin-0.1</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/sonar-plugins/tags/sonar-useless-code-tracker-plugin-0.1</developerConnection>
-    <url>scm:svn:https://svn.codehaus.org/sonar-plugins/tags/sonar-useless-code-tracker-plugin-0.1</url>
+    <connection>scm:svn:http://svn.codehaus.org/sonar-plugins/trunk/useless-code-tracker</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/sonar-plugins/trunk/useless-code-tracker</developerConnection>
+    <url>http://svn.codehaus.org/sonar-plugins</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
