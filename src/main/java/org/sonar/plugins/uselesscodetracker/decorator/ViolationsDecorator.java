@@ -75,7 +75,13 @@ public class ViolationsDecorator implements Decorator {
       if (rulesProfile.getActiveRule(rule) != null) {
         for (Violation violation : context.getViolations()) {
           if (violation.getRule().equals(rule)) {
-            int lineId = violation.getLineId();
+            Integer id  = violation.getLineId();
+            if (id == null) {
+              // means that the violation was not attached. We should skip it
+              continue;
+            }
+
+            int lineId = id;
             Collection<SourceCode> methods = squid.search(new QueryByParent(squid.search(convertToSquidKeyFormat((JavaFile) resource))), new QueryByType(SourceMethod.class));
 
             for (SourceCode method : methods) {
