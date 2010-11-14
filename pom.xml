@@ -5,18 +5,18 @@
   <parent>
     <groupId>org.codehaus.sonar-plugins</groupId>
     <artifactId>parent</artifactId>
-    <version>6</version>
+    <version>7</version>
     <relativePath>../parent</relativePath>
   </parent>
 
   <artifactId>sonar-useless-code-tracker-plugin</artifactId>
-  <name>Sonar Useless Code Tracker Plugin</name>
   <packaging>sonar-plugin</packaging>
   <version>0.3-SNAPSHOT</version>
-  <description>Find duplicated source code within project.</description>
 
-  <inceptionYear>2010</inceptionYear>
+  <name>Sonar Useless Code Tracker Plugin</name>
+  <description>Find duplicated source code within project.</description>
   <url>http://docs.codehaus.org/display/SONAR/Useless+Code+Tracker</url>
+  <inceptionYear>2010</inceptionYear>
   <organization>
     <name>SonarSource</name>
     <url>http://www.sonarsource.com</url>
@@ -47,10 +47,9 @@
   </issueManagement>
 
   <properties>
-    <sonar.pluginKey>uselesscodetracker</sonar.pluginKey>
+    <sonar.version>2.3</sonar.version>
     <sonar.pluginName>Useless Code Tracker</sonar.pluginName>
     <sonar.pluginClass>org.sonar.plugins.uselesscodetracker.TrackerPlugin</sonar.pluginClass>
-    <sonar.version>2.3</sonar.version>
   </properties>
 
   <dependencies>
@@ -85,6 +84,7 @@
       <version>${sonar.version}</version>
       <scope>provided</scope>
     </dependency>
+    <!-- unit tests -->
     <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-testing-harness</artifactId>
@@ -92,16 +92,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.codehaus.sonar</groupId>
-          <artifactId>sonar-packaging-maven-plugin</artifactId>
-          <version>0.3</version>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-  </build>
 </project>
