@@ -31,23 +31,24 @@ public class TrackerMetrics implements Metrics {
 
   public static final Metric USELESS_DUPLICATED_LINES = new Metric("useless-duplicated-lines", "Useless Duplicated Lines",
     "Number of duplicated lines that could be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_DUPLICATION);
+    CoreMetrics.DOMAIN_DUPLICATION).setBestValue(0.0).setOptimizedBestValue(true);
 
   public static final Metric TEMP_USELESS_DUPLICATED_LINES = new Metric("temp_useless-duplicated-lines", "Temporary Useless Duplicated Lines",
     "This metric is used to store the results of CPD for each Maven modules. The real metric to store and display final values is " +
       "USELESS_DUPLICATED_LINES.", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_DUPLICATION).setHidden(true);
+    CoreMetrics.DOMAIN_DUPLICATION).setHidden(true).setBestValue(0.0).setOptimizedBestValue(true);
 
   public static final Metric DEAD_CODE = new Metric("dead-code", "Dead Code",
     "Code that is not used and could be removed", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_RULES);
+    CoreMetrics.DOMAIN_RULES).setBestValue(0.0).setOptimizedBestValue(true);
 
   public static final Metric POTENTIAL_DEAD_CODE = new Metric("potential-dead-code", "Potential Dead Code",
     "Code that is potentially not used and could be removed", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_RULES);
+    CoreMetrics.DOMAIN_RULES).setBestValue(0.0).setOptimizedBestValue(true);
 
   public static final Metric TOTAL_USELESS_LINES = new Metric("total-useless-lines", "Total Useless Code",
-    "Number of lines that can be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false, CoreMetrics.DOMAIN_SIZE);
+    "Number of lines that can be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
+    CoreMetrics.DOMAIN_SIZE).setBestValue(0.0).setOptimizedBestValue(true);
 
   public List<Metric> getMetrics() {
     return Arrays.asList(
