@@ -21,10 +21,7 @@
 package org.sonar.plugins.uselesscodetracker;
 
 import org.sonar.api.*;
-import org.sonar.plugins.uselesscodetracker.decorator.DeadCodeDecorator;
-import org.sonar.plugins.uselesscodetracker.decorator.DuplicationsDecorator;
-import org.sonar.plugins.uselesscodetracker.decorator.TotalDecorator;
-import org.sonar.plugins.uselesscodetracker.decorator.ViolationsDecorator;
+import org.sonar.plugins.uselesscodetracker.decorator.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +46,7 @@ public class TrackerPlugin implements Plugin {
     List<Class<? extends Extension>> list = new ArrayList<Class<? extends Extension>>();
     list.add(TrackerSensor.class);
     list.add(TrackerMetrics.class);
+    list.add(TempMethodLinesDecorator.class);
     list.add(TrackerWidget.class);
     list.add(TotalDecorator.class);
     list.add(ViolationsDecorator.class);

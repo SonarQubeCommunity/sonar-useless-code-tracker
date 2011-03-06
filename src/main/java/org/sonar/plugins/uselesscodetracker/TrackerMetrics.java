@@ -50,12 +50,17 @@ public class TrackerMetrics implements Metrics {
     "Number of lines that can be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
     CoreMetrics.DOMAIN_SIZE).setBestValue(0.0).setOptimizedBestValue(true);
 
+  public static final Metric TEMP_METHOD_LINES = new Metric("temp-method-lines", "Temp info on method lines",
+    "", Metric.ValueType.DATA, Metric.DIRECTION_WORST, false,
+    CoreMetrics.DOMAIN_SIZE);
+
   public List<Metric> getMetrics() {
     return Arrays.asList(
       USELESS_DUPLICATED_LINES,
       TEMP_USELESS_DUPLICATED_LINES,
       TOTAL_USELESS_LINES,
       DEAD_CODE,
-      POTENTIAL_DEAD_CODE);
+      POTENTIAL_DEAD_CODE,
+      TEMP_METHOD_LINES);
   }
 }

@@ -20,6 +20,7 @@
 
 package org.sonar.plugins.uselesscodetracker.decorator;
 
+import com.google.common.collect.Multiset;
 import org.apache.commons.lang.StringUtils;
 import org.sonar.api.CoreProperties;
 import org.sonar.api.batch.*;
@@ -29,6 +30,8 @@ import org.sonar.api.resources.*;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleFinder;
 import org.sonar.api.rules.Violation;
+import org.sonar.api.utils.KeyValue;
+import org.sonar.api.utils.KeyValueFormat;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
 import org.sonar.squid.api.SourceCode;
 import org.sonar.squid.api.SourceMethod;
@@ -39,12 +42,10 @@ import java.util.*;
 
 @DependsUpon(DecoratorBarriers.END_OF_VIOLATIONS_GENERATION)
 public class ViolationsDecorator implements Decorator {
-  private SquidSearch squid;
   private RulesProfile rulesProfile;
   private RuleFinder ruleFinder;
 
-  public ViolationsDecorator(SquidSearch squid, RulesProfile rulesProfile, RuleFinder ruleFinder) {
-    this.squid = squid;
+  public ViolationsDecorator(RulesProfile rulesProfile, RuleFinder ruleFinder) {
     this.rulesProfile = rulesProfile;
     this.ruleFinder = ruleFinder;
   }
@@ -54,7 +55,13 @@ public class ViolationsDecorator implements Decorator {
     return Arrays.asList(TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE);
   }
 
+  @DependsUpon
+  public List<Metric> dependsUpon() {
+    return Arrays.asList(TrackerMetrics.TEMP_METHOD_LINES);
+  }
+
   public void decorate(Resource resource, DecoratorContext context) {
+    
 
     if (Resource.QUALIFIER_CLASS.equals(resource.getQualifier())) {
       List<Rule> deadCodeRules = new ArrayList();
@@ -64,13 +71,22 @@ public class ViolationsDecorator implements Decorator {
       List<Rule> potentialDeadCodeRules = new ArrayList();
       potentialDeadCodeRules.add(ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, "UnusedProtectedMethod"));
 
-      saveFileMeasure(resource, TrackerMetrics.DEAD_CODE, context, deadCodeRules);
-      saveFileMeasure(resource, TrackerMetrics.POTENTIAL_DEAD_CODE, context, potentialDeadCodeRules);
+      saveFileMeasure(TrackerMetrics.DEAD_CODE, context, deadCodeRules);
+      saveFileMeasure(TrackerMetrics.POTENTIAL_DEAD_CODE, context, potentialDeadCodeRules);
     }
   }
 
-  private void saveFileMeasure(Resource resource, Metric metric, DecoratorContext context, List<Rule> rules) {
-    Double sum = 0.0;
+  private void saveFileMeasure(Metric metric, DecoratorContext context, List<Rule> rules) {
+    double sum = 0.0;
+    Measure tempLines = context.getMeasure(TrackerMetrics.TEMP_METHOD_LINES);
+
+    String numberOfLines = "";
+
+    if (tempLines != null) {
+      numberOfLines = tempLines.getData();
+    }
+    Map<String, String> methodLines = KeyValueFormat.parse(numberOfLines);
+
 
     for (Rule rule : rules) {
       if (rulesProfile.getActiveRule(rule) != null) {
@@ -82,13 +98,9 @@ public class ViolationsDecorator implements Decorator {
               continue;
             }
 
-            int lineId = id;
-            Collection<SourceCode> methods = squid.search(new QueryByParent(squid.search(convertToSquidKeyFormat((JavaFile) resource))), new QueryByType(SourceMethod.class));
 
-            for (SourceCode method : methods) {
-              if (method.getStartAtLine() == lineId) {
-                sum += (method.getEndAtLine() - method.getStartAtLine() + 1);
-              }
+            if (methodLines.containsKey(Integer.toString(id))) {
+              sum += Integer.valueOf(methodLines.get(Integer.toString(id)));
             }
           }
         }
@@ -103,15 +115,5 @@ public class ViolationsDecorator implements Decorator {
     }
 
     return false;
-  }
-
-  public static String convertToSquidKeyFormat(JavaFile file) {
-    String key = file.getKey();
-    if (file.getParent() == null || file.getParent().isDefault()) {
-      key = StringUtils.substringAfterLast(file.getKey(), ".");
-    } else {
-      key = StringUtils.replace(key, ".", "/");
-    }
-    return key + ".java";
   }
 }

@@ -47,7 +47,7 @@
   </issueManagement>
 
   <properties>
-    <sonar.version>2.3</sonar.version>
+    <sonar.version>2.6</sonar.version>
     <sonar.pluginName>Useless Code Tracker</sonar.pluginName>
     <sonar.pluginClass>org.sonar.plugins.uselesscodetracker.TrackerPlugin</sonar.pluginClass>
   </properties>
@@ -81,6 +81,12 @@
     <dependency>
       <groupId>org.codehaus.sonar</groupId>
       <artifactId>sonar-plugin-api</artifactId>
+      <version>${sonar.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.sonar</groupId>
+      <artifactId>sonar-java-api</artifactId>
       <version>${sonar.version}</version>
       <scope>provided</scope>
     </dependency>
