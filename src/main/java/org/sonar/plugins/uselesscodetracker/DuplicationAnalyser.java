@@ -37,13 +37,13 @@ public class DuplicationAnalyser {
   }
 
   public void analyse(Iterator<Match> matches) {
-    double duplicated_lines = 0.0;
+    double duplicatedLines = 0.0;
 
     while (matches.hasNext()) {
       Match match = matches.next();
-      duplicated_lines += (match.getMarkCount() - 1) * match.getLineCount();
+      duplicatedLines += (match.getMarkCount() - 1) * match.getLineCount();
     }
 
-    context.saveMeasure(project, TrackerMetrics.TEMP_USELESS_DUPLICATED_LINES, duplicated_lines);
+    context.saveMeasure(project, TrackerMetrics.TEMP_USELESS_DUPLICATED_LINES, duplicatedLines);
   }
 }

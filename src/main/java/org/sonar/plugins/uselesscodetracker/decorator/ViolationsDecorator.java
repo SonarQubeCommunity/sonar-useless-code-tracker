@@ -20,8 +20,6 @@
 
 package org.sonar.plugins.uselesscodetracker.decorator;
 
-import com.google.common.collect.Multiset;
-import org.apache.commons.lang.StringUtils;
 import org.sonar.api.CoreProperties;
 import org.sonar.api.batch.*;
 import org.sonar.api.measures.*;
@@ -30,13 +28,8 @@ import org.sonar.api.resources.*;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleFinder;
 import org.sonar.api.rules.Violation;
-import org.sonar.api.utils.KeyValue;
 import org.sonar.api.utils.KeyValueFormat;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
-import org.sonar.squid.api.SourceCode;
-import org.sonar.squid.api.SourceMethod;
-import org.sonar.squid.indexer.QueryByParent;
-import org.sonar.squid.indexer.QueryByType;
 
 import java.util.*;
 

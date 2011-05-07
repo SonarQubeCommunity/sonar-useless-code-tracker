@@ -20,29 +20,14 @@
 
 package org.sonar.plugins.uselesscodetracker.decorator;
 
-import org.apache.commons.lang.StringUtils;
-import org.sonar.api.CoreProperties;
 import org.sonar.api.batch.*;
-import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.MeasureUtils;
 import org.sonar.api.measures.Metric;
-import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.Java;
-import org.sonar.api.resources.JavaFile;
 import org.sonar.api.resources.Project;
 import org.sonar.api.resources.Resource;
-import org.sonar.api.rules.Rule;
-import org.sonar.api.rules.RuleFinder;
-import org.sonar.api.rules.Violation;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
-import org.sonar.squid.api.SourceCode;
-import org.sonar.squid.api.SourceMethod;
-import org.sonar.squid.indexer.QueryByParent;
-import org.sonar.squid.indexer.QueryByType;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 public class DeadCodeDecorator implements Decorator {
