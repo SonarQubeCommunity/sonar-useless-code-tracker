@@ -43,7 +43,7 @@ public class TempMethodLinesDecorator implements Decorator {
 
 
   public void decorate(Resource resource, DecoratorContext context) {
-    if (Scopes.isBlockUnit(resource)) {
+    if (resource instanceof JavaMethod) {
       computeMethodDistribution(resource, context);
       return;
     }
