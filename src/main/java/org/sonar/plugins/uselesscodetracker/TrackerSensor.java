@@ -64,7 +64,7 @@ public class TrackerSensor implements Sensor {
   public void analyse(Project project, SensorContext context) {
     CpdMapping mapping = getMapping(project.getLanguage());
     CPD cpd = executeCPD(project, mapping, project.getFileSystem().getSourceCharset());
-    saveResults(cpd, mapping, project, context);
+    saveResults(cpd, project, context);
   }
 
   private CpdMapping getMapping(Language language) {
@@ -76,7 +76,7 @@ public class TrackerSensor implements Sensor {
     return null;
   }
 
-  private void saveResults(CPD cpd, CpdMapping mapping, Project project, SensorContext context) {
+  private void saveResults(CPD cpd, Project project, SensorContext context) {
     DuplicationAnalyser duplicationAnalyser = new DuplicationAnalyser(project, context);
     duplicationAnalyser.analyse(cpd.getMatches());
   }
