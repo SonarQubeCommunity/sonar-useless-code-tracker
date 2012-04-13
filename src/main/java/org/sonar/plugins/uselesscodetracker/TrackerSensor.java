@@ -30,6 +30,7 @@ import org.sonar.api.batch.SensorContext;
 import org.sonar.api.resources.Java;
 import org.sonar.api.resources.Language;
 import org.sonar.api.resources.Project;
+import org.sonar.api.utils.SonarException;
 import org.sonar.duplications.cpd.CPD;
 
 import java.io.IOException;
@@ -88,7 +89,7 @@ public class TrackerSensor implements Sensor {
       return cpd;
 
     } catch (Exception e) {
-      throw new TrackerException(e);
+      throw new SonarException(e);
     }
   }
 

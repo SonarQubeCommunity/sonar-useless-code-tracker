@@ -17,42 +17,35 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package org.sonar.plugins.uselesscodetracker.decorator;
 
-import org.sonar.api.batch.Decorator;
-import org.sonar.api.batch.DecoratorContext;
-import org.sonar.api.batch.DependedUpon;
-import org.sonar.api.measures.MeasureUtils;
-import org.sonar.api.measures.Metric;
+import org.junit.Before;
+import org.junit.Test;
 import org.sonar.api.resources.Project;
-import org.sonar.api.resources.Resource;
-import org.sonar.api.resources.ResourceUtils;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
 
-import java.util.Arrays;
-import java.util.List;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
 
-public class DeadCodeDecorator implements Decorator {
+public class DuplicationsDecoratorTest {
 
-  @DependedUpon
-  public List<Metric> dependedUpon() {
-    return Arrays.asList(TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE);
+  private DuplicationsDecorator decorator;
+
+  @Before
+  public void setUp() {
+    decorator = new DuplicationsDecorator();
   }
 
-  public void decorate(Resource resource, DecoratorContext context) {
-    if (!ResourceUtils.isClass(resource)) {
-      for (Metric metric : dependedUpon()) {
-        Double measure = MeasureUtils.sum(false, context.getChildrenMeasures(metric));
-        if (measure != null) {
-          context.saveMeasure(metric, measure);
-        }
-      }
-    }
+  @Test
+  public void shouldExecuteOnlyOnAnyProject() {
+    Project project = new Project("key");
+    assertThat(decorator.shouldExecuteOnProject(project), is(true));
   }
 
-  public boolean shouldExecuteOnProject(Project project) {
-    return true;
+  @Test
+  public void dependencies() {
+    assertThat(decorator.dependedUpon(), hasItem(TrackerMetrics.USELESS_DUPLICATED_LINES));
+    assertThat(decorator.dependsUpon(), hasItems(TrackerMetrics.TEMP_USELESS_DUPLICATED_LINES));
   }
 
 }

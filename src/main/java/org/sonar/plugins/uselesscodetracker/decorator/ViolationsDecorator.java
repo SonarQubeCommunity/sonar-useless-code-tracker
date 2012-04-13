@@ -22,16 +22,23 @@ package org.sonar.plugins.uselesscodetracker.decorator;
 
 import org.sonar.api.CoreProperties;
 import org.sonar.api.batch.*;
-import org.sonar.api.measures.*;
+import org.sonar.api.measures.Measure;
+import org.sonar.api.measures.Metric;
 import org.sonar.api.profiles.RulesProfile;
-import org.sonar.api.resources.*;
+import org.sonar.api.resources.Java;
+import org.sonar.api.resources.Project;
+import org.sonar.api.resources.Resource;
+import org.sonar.api.resources.ResourceUtils;
 import org.sonar.api.rules.Rule;
 import org.sonar.api.rules.RuleFinder;
 import org.sonar.api.rules.Violation;
 import org.sonar.api.utils.KeyValueFormat;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 @DependsUpon(DecoratorBarriers.END_OF_VIOLATIONS_GENERATION)
 public class ViolationsDecorator implements Decorator {
@@ -54,9 +61,7 @@ public class ViolationsDecorator implements Decorator {
   }
 
   public void decorate(Resource resource, DecoratorContext context) {
-    
-
-    if (Resource.QUALIFIER_CLASS.equals(resource.getQualifier())) {
+    if (ResourceUtils.isClass(resource)) {
       List<Rule> deadCodeRules = new ArrayList();
       deadCodeRules.add(ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, "UnusedPrivateMethod"));
       deadCodeRules.add(ruleFinder.findByKey(CoreProperties.PMD_PLUGIN, "UnusedPrivateMethod"));
@@ -91,7 +96,6 @@ public class ViolationsDecorator implements Decorator {
               continue;
             }
 
-
             if (methodLines.containsKey(Integer.toString(id))) {
               sum += Integer.valueOf(methodLines.get(Integer.toString(id)));
             }
@@ -103,10 +107,6 @@ public class ViolationsDecorator implements Decorator {
   }
 
   public boolean shouldExecuteOnProject(Project project) {
-    if(Java.INSTANCE.equals(project.getLanguage())) {
-      return true;
-    }
-
-    return false;
+    return Java.KEY.equals(project.getLanguageKey());
   }
 }

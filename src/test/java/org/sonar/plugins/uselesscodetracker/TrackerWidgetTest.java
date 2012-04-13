@@ -20,16 +20,19 @@
 
 package org.sonar.plugins.uselesscodetracker;
 
+import org.junit.Test;
+
 import static org.hamcrest.Matchers.notNullValue;
 import static org.junit.Assert.assertThat;
-
-import org.junit.Test;
 
 public class TrackerWidgetTest {
 
   @Test
-  public void testGetTemplatePath() {
-    String path = new TrackerWidget().getTemplatePath();
-    assertThat(getClass().getResource(path), notNullValue());
+  public void testWidgetDefinition() {
+    TrackerWidget widget = new TrackerWidget();
+    assertThat(widget.getId(), notNullValue());
+    assertThat(widget.getTitle(), notNullValue());
+    assertThat(getClass().getResource(widget.getTemplatePath()), notNullValue());
   }
+
 }

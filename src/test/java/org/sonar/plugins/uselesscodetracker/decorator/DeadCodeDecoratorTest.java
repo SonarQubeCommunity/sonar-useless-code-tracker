@@ -17,11 +17,34 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
+package org.sonar.plugins.uselesscodetracker.decorator;
 
-package org.sonar.plugins.uselesscodetracker;
+import org.junit.Before;
+import org.junit.Test;
+import org.sonar.api.resources.Project;
+import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
 
-public class TrackerException extends RuntimeException {
-  public TrackerException(Throwable throwable) {
-    super(throwable);
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
+public class DeadCodeDecoratorTest {
+
+  private DeadCodeDecorator decorator;
+
+  @Before
+  public void setUp() {
+    decorator = new DeadCodeDecorator();
   }
+
+  @Test
+  public void shouldExecuteOnAnyProject() {
+    assertThat(decorator.shouldExecuteOnProject(new Project("key")), is(true));
+  }
+
+  @Test
+  public void dependedUpon() {
+    assertThat(decorator.dependedUpon(), hasItems(TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE));
+  }
+
 }

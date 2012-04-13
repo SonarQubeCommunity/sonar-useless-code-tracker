@@ -17,42 +17,41 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package org.sonar.plugins.uselesscodetracker.decorator;
 
-import org.sonar.api.batch.Decorator;
-import org.sonar.api.batch.DecoratorContext;
-import org.sonar.api.batch.DependedUpon;
-import org.sonar.api.measures.MeasureUtils;
-import org.sonar.api.measures.Metric;
+import org.junit.Before;
+import org.junit.Test;
+import org.sonar.api.profiles.RulesProfile;
 import org.sonar.api.resources.Project;
-import org.sonar.api.resources.Resource;
-import org.sonar.api.resources.ResourceUtils;
+import org.sonar.api.rules.RuleFinder;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
 
-import java.util.Arrays;
-import java.util.List;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
-public class DeadCodeDecorator implements Decorator {
+public class ViolationsDecoratorTest {
 
-  @DependedUpon
-  public List<Metric> dependedUpon() {
-    return Arrays.asList(TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE);
+  private ViolationsDecorator decorator;
+
+  @Before
+  public void setUp() {
+    decorator = new ViolationsDecorator(mock(RulesProfile.class), mock(RuleFinder.class));
   }
 
-  public void decorate(Resource resource, DecoratorContext context) {
-    if (!ResourceUtils.isClass(resource)) {
-      for (Metric metric : dependedUpon()) {
-        Double measure = MeasureUtils.sum(false, context.getChildrenMeasures(metric));
-        if (measure != null) {
-          context.saveMeasure(metric, measure);
-        }
-      }
-    }
+  @Test
+  public void shouldExecuteOnlyOnJavaProject() {
+    Project project = new Project("key");
+    project.setLanguageKey("java");
+    assertThat(decorator.shouldExecuteOnProject(project), is(true));
+    project.setLanguageKey("groovy");
+    assertThat(decorator.shouldExecuteOnProject(project), is(false));
   }
 
-  public boolean shouldExecuteOnProject(Project project) {
-    return true;
+  @Test
+  public void dependencies() {
+    assertThat(decorator.dependedUpon(), hasItems(TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE));
+    assertThat(decorator.dependsUpon(), hasItem(TrackerMetrics.TEMP_METHOD_LINES));
   }
 
 }
