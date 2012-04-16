@@ -29,7 +29,7 @@ public class TrackerWidget extends AbstractRubyTemplate implements RubyRailsWidg
   }
 
   public String getTitle() {
-    return "Useless Code Tracker";
+    return "Useless Code";
   }
 
   @Override
