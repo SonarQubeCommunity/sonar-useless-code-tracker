@@ -17,24 +17,40 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package org.sonar.plugins.uselesscodetracker.decorator;
 
-import org.sonar.api.batch.*;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
+import org.codehaus.stax2.XMLInputFactory2;
+import org.codehaus.staxmate.SMInputFactory;
+import org.codehaus.staxmate.in.SMHierarchicCursor;
+import org.codehaus.staxmate.in.SMInputCursor;
+import org.sonar.api.batch.Decorator;
+import org.sonar.api.batch.DecoratorContext;
+import org.sonar.api.batch.DependedUpon;
+import org.sonar.api.database.model.ResourceModel;
+import org.sonar.api.measures.CoreMetrics;
 import org.sonar.api.measures.Measure;
 import org.sonar.api.measures.MeasureUtils;
 import org.sonar.api.measures.Metric;
-import org.sonar.api.resources.*;
+import org.sonar.api.resources.Project;
+import org.sonar.api.resources.Resource;
+import org.sonar.api.utils.SonarException;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
 
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+
+import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class DuplicationsDecorator implements Decorator {
 
-  @DependsUpon
-  public List<Metric> dependsUpon() {
-    return Arrays.asList(TrackerMetrics.TEMP_USELESS_DUPLICATED_LINES);
+  public boolean shouldExecuteOnProject(Project project) {
+    return true;
   }
 
   @DependedUpon
@@ -42,32 +58,139 @@ public class DuplicationsDecorator implements Decorator {
     return Arrays.asList(TrackerMetrics.USELESS_DUPLICATED_LINES);
   }
 
+  @VisibleForTesting
+  Set<String> processedResources = Sets.newHashSet();
+
   public void decorate(Resource resource, DecoratorContext context) {
-    if (ResourceUtils.isFile(resource) || ResourceUtils.isPackage(resource)) {
-      return;
+    double uselessDuplicatedLines = 0;
+
+    Measure measure = context.getMeasure(CoreMetrics.DUPLICATIONS_DATA);
+    if (MeasureUtils.hasData(measure)) {
+      String resourceKey = new StringBuilder(ResourceModel.KEY_SIZE)
+          .append(context.getProject().getKey())
+          .append(':')
+          .append(context.getResource().getKey())
+          .toString();
+      List<List<Block>> groups = parseDuplicationData(measure.getData());
+      uselessDuplicatedLines = analyse(groups, resourceKey);
     }
 
-    if (ResourceUtils.isRootProject(resource) || ResourceUtils.isModuleProject(resource)) {
-      Measure projectDuplicatedLines = context.getMeasure(TrackerMetrics.TEMP_USELESS_DUPLICATED_LINES);
-      Double childrenDuplicatedLines = MeasureUtils.sum(false, context.getChildrenMeasures(TrackerMetrics.TEMP_USELESS_DUPLICATED_LINES));
+    uselessDuplicatedLines += MeasureUtils.sum(true, context.getChildrenMeasures(TrackerMetrics.USELESS_DUPLICATED_LINES));
+    if (uselessDuplicatedLines > 0) {
+      context.saveMeasure(TrackerMetrics.USELESS_DUPLICATED_LINES, uselessDuplicatedLines);
+    }
+  }
 
-      if (projectDuplicatedLines != null || childrenDuplicatedLines != null) {
-        double duplicatedLines = MeasureUtils.getValue(projectDuplicatedLines, 0.0);
-        if (childrenDuplicatedLines != null) {
-          duplicatedLines += childrenDuplicatedLines;
+  /**
+   * @return number of lines, which can be removed
+   */
+  @VisibleForTesting
+  int analyse(List<List<Block>> groups, String currentResourceKey) {
+    Set<Integer> linesToRemove = Sets.newHashSet();
+    int result = 0;
+    for (List<Block> group : groups) {
+      if (shouldCount(group)) {
+        result += count(group, currentResourceKey, linesToRemove);
+      }
+      result += count2(group, currentResourceKey, linesToRemove);
+    }
+    processedResources.add(currentResourceKey);
+    return result;
+  }
+
+  private int count(List<Block> group, String currentResourceKey, Set<Integer> linesToRemove) {
+    int result = 0;
+    for (Block block : group) {
+      if (currentResourceKey.equals(block.resourceKey)) {
+        for (int line = block.s; line <= block.e; line++) {
+          if (!linesToRemove.contains(line)) {
+            linesToRemove.add(line);
+            result++;
+          }
         }
-        context.saveMeasure(TrackerMetrics.USELESS_DUPLICATED_LINES, duplicatedLines);
       }
     }
-    else {
-      Double childrenDuplicatedLines = MeasureUtils.sum(false, context.getChildrenMeasures(TrackerMetrics.USELESS_DUPLICATED_LINES));
-      if (childrenDuplicatedLines != null) {
-        context.saveMeasure(TrackerMetrics.USELESS_DUPLICATED_LINES, childrenDuplicatedLines);
+    return result;
+  }
+
+  private int count2(List<Block> group, String currentResourceKey, Set<Integer> linesToRemove) {
+    boolean first = true;
+    int result = 0;
+    for (Block block : group) {
+      if (currentResourceKey.equals(block.resourceKey)) {
+        for (int line = block.s; line <= block.e; line++) {
+          if (!linesToRemove.contains(line)) {
+            linesToRemove.add(line);
+            if (!first) {
+              result++;
+            }
+          }
+        }
+        first = false;
       }
+    }
+    return result;
+  }
+
+  private boolean shouldCount(List<Block> group) {
+    for (Block block : group) {
+      if (processedResources.contains(block.resourceKey)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  static class Block {
+    final String resourceKey;
+    final int s;
+    final int e;
+
+    public Block(String resourceKey, int s, int e) {
+      this.resourceKey = resourceKey;
+      this.s = s;
+      this.e = e;
     }
   }
 
-  public boolean shouldExecuteOnProject(Project project) {
-    return true;
+  @VisibleForTesting
+  static List<List<Block>> parseDuplicationData(String data) {
+    try {
+      ImmutableList.Builder<List<Block>> groups = ImmutableList.builder();
+      StringReader reader = new StringReader(data);
+      SMInputFactory inputFactory = initStax();
+      SMHierarchicCursor rootC = inputFactory.rootElementCursor(reader);
+      // <duplications>
+      rootC.advance();
+      SMInputCursor groupsCursor = rootC.childElementCursor("g");
+      while (groupsCursor.getNext() != null) {
+        // <g>
+        SMInputCursor blocksCursor = groupsCursor.childElementCursor("b");
+        ImmutableList.Builder<Block> group = ImmutableList.builder();
+        while (blocksCursor.getNext() != null) {
+          // <b>
+          String resourceKey = blocksCursor.getAttrValue("r");
+          int firstLine = getAttrIntValue(blocksCursor, "s");
+          int numberOfLines = getAttrIntValue(blocksCursor, "l");
+
+          int lastLine = firstLine + numberOfLines - 1;
+          group.add(new Block(resourceKey, firstLine, lastLine));
+        }
+        groups.add(group.build());
+      }
+      return groups.build();
+    } catch (XMLStreamException e) {
+      throw new SonarException(e.getMessage(), e);
+    }
   }
+
+  private static int getAttrIntValue(SMInputCursor cursor, String attrName) throws XMLStreamException {
+    return cursor.getAttrIntValue(cursor.findAttrIndex(null, attrName));
+  }
+
+  private static SMInputFactory initStax() {
+    XMLInputFactory xmlFactory = XMLInputFactory2.newInstance();
+    return new SMInputFactory(xmlFactory);
+  }
+
 }

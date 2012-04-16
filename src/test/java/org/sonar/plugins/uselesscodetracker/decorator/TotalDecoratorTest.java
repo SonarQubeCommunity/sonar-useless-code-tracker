@@ -37,7 +37,7 @@ public class TotalDecoratorTest {
   }
 
   @Test
-  public void shouldExecuteOnlyOnAnyProject() {
+  public void shouldExecuteOnAnyProject() {
     Project project = new Project("key");
     assertThat(decorator.shouldExecuteOnProject(project), is(true));
   }
