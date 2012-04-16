@@ -31,6 +31,10 @@
 
   <developers>
     <developer>
+      <id>godin</id>
+      <name>Evgeny Mandrikov</name>
+    </developer>
+    <developer>
       <id>ogaudin</id>
       <name>Olivier Gaudin</name>
     </developer>
