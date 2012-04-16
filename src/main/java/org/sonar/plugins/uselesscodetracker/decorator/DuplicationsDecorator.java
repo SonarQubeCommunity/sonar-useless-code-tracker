@@ -47,6 +47,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Calculates number of duplicated lines that could be reduced.
+ * Strategy is following: first block inside first occurrence of group survives, others can be removed.
+ * Should be noted that implemented algorithm depends on order of traversal of resources
+ * and on order of blocks within group.
+ */
 public class DuplicationsDecorator implements Decorator {
 
   public boolean shouldExecuteOnProject(Project project) {
@@ -58,8 +64,7 @@ public class DuplicationsDecorator implements Decorator {
     return Arrays.asList(TrackerMetrics.USELESS_DUPLICATED_LINES);
   }
 
-  @VisibleForTesting
-  Set<String> processedResources = Sets.newHashSet();
+  private Set<String> processedResources = Sets.newHashSet();
 
   public void decorate(Resource resource, DecoratorContext context) {
     double uselessDuplicatedLines = 0;
@@ -82,39 +87,23 @@ public class DuplicationsDecorator implements Decorator {
   }
 
   /**
-   * @return number of lines, which can be removed
+   * @return number of duplicated lines that could be reduced
    */
   @VisibleForTesting
   int analyse(List<List<Block>> groups, String currentResourceKey) {
     Set<Integer> linesToRemove = Sets.newHashSet();
     int result = 0;
     for (List<Block> group : groups) {
-      if (shouldCount(group)) {
-        result += count(group, currentResourceKey, linesToRemove);
-      }
-      result += count2(group, currentResourceKey, linesToRemove);
+      result += count(group, currentResourceKey, linesToRemove, isFirstOccurrence(group));
     }
     processedResources.add(currentResourceKey);
     return result;
   }
 
-  private int count(List<Block> group, String currentResourceKey, Set<Integer> linesToRemove) {
-    int result = 0;
-    for (Block block : group) {
-      if (currentResourceKey.equals(block.resourceKey)) {
-        for (int line = block.s; line <= block.e; line++) {
-          if (!linesToRemove.contains(line)) {
-            linesToRemove.add(line);
-            result++;
-          }
-        }
-      }
-    }
-    return result;
-  }
-
-  private int count2(List<Block> group, String currentResourceKey, Set<Integer> linesToRemove) {
-    boolean first = true;
+  /**
+   * @param first true if this is a first occurrence of this group, in this case first block should survive
+   */
+  private int count(List<Block> group, String currentResourceKey, Set<Integer> linesToRemove, boolean first) {
     int result = 0;
     for (Block block : group) {
       if (currentResourceKey.equals(block.resourceKey)) {
@@ -132,15 +121,19 @@ public class DuplicationsDecorator implements Decorator {
     return result;
   }
 
-  private boolean shouldCount(List<Block> group) {
+  /**
+   * If at least one of resources from this group was processed, then this is not a first occurrence of this group.
+   */
+  private boolean isFirstOccurrence(List<Block> group) {
     for (Block block : group) {
       if (processedResources.contains(block.resourceKey)) {
-        return true;
+        return false;
       }
     }
-    return false;
+    return true;
   }
 
+  @VisibleForTesting
   static class Block {
     final String resourceKey;
     final int s;
@@ -153,6 +146,9 @@ public class DuplicationsDecorator implements Decorator {
     }
   }
 
+  /**
+   * Parses data of {@link CoreMetrics#DUPLICATIONS_DATA}.
+   */
   @VisibleForTesting
   static List<List<Block>> parseDuplicationData(String data) {
     try {

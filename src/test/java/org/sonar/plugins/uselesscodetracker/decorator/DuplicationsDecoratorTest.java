@@ -61,11 +61,9 @@ public class DuplicationsDecoratorTest {
 
     linesToRemove = decorator.analyse(groups, "key1");
     assertThat(linesToRemove, is(0));
-    assertThat(decorator.processedResources.contains("key1"), is(true));
 
     linesToRemove = decorator.analyse(groups, "key2");
     assertThat(linesToRemove, is(2));
-    assertThat(decorator.processedResources.contains("key2"), is(true));
   }
 
   @Test
