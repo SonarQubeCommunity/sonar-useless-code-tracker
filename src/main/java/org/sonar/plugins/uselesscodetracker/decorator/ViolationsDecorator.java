@@ -20,6 +20,7 @@
 
 package org.sonar.plugins.uselesscodetracker.decorator;
 
+import com.google.common.collect.Lists;
 import org.sonar.api.CoreProperties;
 import org.sonar.api.batch.*;
 import org.sonar.api.measures.Measure;
@@ -35,7 +36,6 @@ import org.sonar.api.rules.Violation;
 import org.sonar.api.utils.KeyValueFormat;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -62,11 +62,11 @@ public class ViolationsDecorator implements Decorator {
 
   public void decorate(Resource resource, DecoratorContext context) {
     if (ResourceUtils.isClass(resource)) {
-      List<Rule> deadCodeRules = new ArrayList();
+      List<Rule> deadCodeRules = Lists.newArrayList();
       deadCodeRules.add(ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, "UnusedPrivateMethod"));
       deadCodeRules.add(ruleFinder.findByKey(CoreProperties.PMD_PLUGIN, "UnusedPrivateMethod"));
 
-      List<Rule> potentialDeadCodeRules = new ArrayList();
+      List<Rule> potentialDeadCodeRules = Lists.newArrayList();
       potentialDeadCodeRules.add(ruleFinder.findByKey(CoreProperties.SQUID_PLUGIN, "UnusedProtectedMethod"));
 
       saveFileMeasure(TrackerMetrics.DEAD_CODE, context, deadCodeRules);
@@ -77,15 +77,11 @@ public class ViolationsDecorator implements Decorator {
   private void saveFileMeasure(Metric metric, DecoratorContext context, List<Rule> rules) {
     double sum = 0.0;
     Measure tempLines = context.getMeasure(TrackerMetrics.TEMP_METHOD_LINES);
-
     String numberOfLines = "";
-
     if (tempLines != null) {
       numberOfLines = tempLines.getData();
     }
     Map<String, String> methodLines = KeyValueFormat.parse(numberOfLines);
-
-
     for (Rule rule : rules) {
       if (rulesProfile.getActiveRule(rule) != null) {
         for (Violation violation : context.getViolations()) {

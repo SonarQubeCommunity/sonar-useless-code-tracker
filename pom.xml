@@ -14,7 +14,7 @@
   <version>0.5-SNAPSHOT</version>
 
   <name>Sonar Useless Code Tracker Plugin</name>
-  <description>Find duplicated source code within project.</description>
+  <description>Reports on source code that can be reduced.</description>
   <url>http://docs.codehaus.org/display/SONAR/Useless+Code+Tracker</url>
   <inceptionYear>2010</inceptionYear>
   <organization>

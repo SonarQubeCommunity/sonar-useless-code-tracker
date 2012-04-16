@@ -123,6 +123,8 @@ public class DuplicationsDecorator implements Decorator {
 
   /**
    * If at least one of resources from this group was processed, then this is not a first occurrence of this group.
+   * This is due to the fact that if duplication group (A, B) was detected for resource A,
+   * then duplication group (B, A) should be detected for resource B.
    */
   private boolean isFirstOccurrence(List<Block> group) {
     for (Block block : group) {

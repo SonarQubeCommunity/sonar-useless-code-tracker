@@ -21,19 +21,28 @@ package org.sonar.plugins.uselesscodetracker.decorator;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.sonar.api.batch.DecoratorContext;
+import org.sonar.api.measures.Measure;
 import org.sonar.api.resources.Project;
+import org.sonar.api.resources.Resource;
+import org.sonar.api.resources.Scopes;
 import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 public class TotalDecoratorTest {
 
   private TotalDecorator decorator;
+  private DecoratorContext context;
+  private Resource resource;
 
   @Before
   public void setUp() {
     decorator = new TotalDecorator();
+    context = mock(DecoratorContext.class);
+    resource = mock(Resource.class);
   }
 
   @Test
@@ -46,6 +55,32 @@ public class TotalDecoratorTest {
   public void dependencies() {
     assertThat(decorator.dependedUpon(), hasItem(TrackerMetrics.TOTAL_USELESS_LINES));
     assertThat(decorator.dependsUpon(), hasItems(TrackerMetrics.USELESS_DUPLICATED_LINES, TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE));
+  }
+
+  @Test
+  public void shouldNotDecorate() {
+    when(resource.getScope())
+        .thenReturn(Scopes.FILE)
+        .thenReturn(Scopes.DIRECTORY);
+    decorator.decorate(resource, context);
+    verifyZeroInteractions(context);
+  }
+
+  @Test
+  public void shouldDecorate() {
+    when(resource.getScope()).thenReturn(Scopes.PROJECT);
+    when(context.getMeasure(TrackerMetrics.USELESS_DUPLICATED_LINES)).thenReturn(new Measure(TrackerMetrics.USELESS_DUPLICATED_LINES, 1.0));
+    when(context.getMeasure(TrackerMetrics.DEAD_CODE)).thenReturn(new Measure(TrackerMetrics.DEAD_CODE, 2.0));
+    when(context.getMeasure(TrackerMetrics.POTENTIAL_DEAD_CODE)).thenReturn(new Measure(TrackerMetrics.POTENTIAL_DEAD_CODE, 3.0));
+    decorator.decorate(resource, context);
+    verify(context).saveMeasure(TrackerMetrics.TOTAL_USELESS_LINES, 6.0);
+  }
+
+  @Test
+  public void shouldNotSaveZero() {
+    when(resource.getScope()).thenReturn(Scopes.PROJECT);
+    decorator.decorate(resource, context);
+    verify(context, never()).saveMeasure(eq(TrackerMetrics.TOTAL_USELESS_LINES), anyDouble());
   }
 
 }

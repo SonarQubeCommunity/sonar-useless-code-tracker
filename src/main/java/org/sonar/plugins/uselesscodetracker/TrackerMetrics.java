@@ -29,32 +29,55 @@ import java.util.List;
 
 public class TrackerMetrics implements Metrics {
 
-  public static final Metric USELESS_DUPLICATED_LINES = new Metric("useless-duplicated-lines", "Useless Duplicated Lines",
-    "Number of duplicated lines that could be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_DUPLICATION).setBestValue(0.0).setOptimizedBestValue(true);
+  public static final Metric USELESS_DUPLICATED_LINES = new Metric.Builder("useless-duplicated-lines", "Useless Duplicated Lines", Metric.ValueType.INT)
+      .setDescription("Number of duplicated lines that could be reduced")
+      .setDirection(Metric.DIRECTION_WORST)
+      .setQualitative(false)
+      .setBestValue(0.0)
+      .setOptimizedBestValue(true)
+      .setDomain(CoreMetrics.DOMAIN_DUPLICATION)
+      .create();
 
-  public static final Metric DEAD_CODE = new Metric("dead-code", "Dead Code",
-    "Code that is not used and could be removed", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_RULES).setBestValue(0.0).setOptimizedBestValue(true);
+  public static final Metric DEAD_CODE = new Metric.Builder("dead-code", "Dead Code", Metric.ValueType.INT)
+      .setDescription("Code that is not used and could be removed")
+      .setDirection(Metric.DIRECTION_WORST)
+      .setQualitative(false)
+      .setBestValue(0.0)
+      .setOptimizedBestValue(true)
+      .setDomain(CoreMetrics.DOMAIN_RULES)
+      .create();
 
-  public static final Metric POTENTIAL_DEAD_CODE = new Metric("potential-dead-code", "Potential Dead Code",
-    "Code that is potentially not used and could be removed", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_RULES).setBestValue(0.0).setOptimizedBestValue(true);
+  public static final Metric POTENTIAL_DEAD_CODE = new Metric.Builder("potential-dead-code", "Potential Dead Code", Metric.ValueType.INT)
+      .setDescription("Code that is potentially not used and could be removed")
+      .setDirection(Metric.DIRECTION_WORST)
+      .setQualitative(false)
+      .setBestValue(0.0)
+      .setOptimizedBestValue(true)
+      .setDomain(CoreMetrics.DOMAIN_RULES)
+      .create();
 
-  public static final Metric TOTAL_USELESS_LINES = new Metric("total-useless-lines", "Total Useless Code",
-    "Number of lines that can be reduced", Metric.ValueType.INT, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_SIZE).setBestValue(0.0).setOptimizedBestValue(true);
+  public static final Metric TOTAL_USELESS_LINES = new Metric.Builder("total-useless-lines", "Total Useless Code", Metric.ValueType.INT)
+      .setDescription("Number of lines that can be reduced")
+      .setDirection(Metric.DIRECTION_WORST)
+      .setQualitative(false)
+      .setBestValue(0.0)
+      .setOptimizedBestValue(true)
+      .setDomain(CoreMetrics.DOMAIN_SIZE)
+      .create();
 
-  public static final Metric TEMP_METHOD_LINES = new Metric("temp-method-lines", "Temp info on method lines",
-    "", Metric.ValueType.DATA, Metric.DIRECTION_WORST, false,
-    CoreMetrics.DOMAIN_SIZE);
+  public static final Metric TEMP_METHOD_LINES = new Metric.Builder("temp-method-lines", "Temp info on method lines", Metric.ValueType.DATA)
+      .setDescription("")
+      .setQualitative(false)
+      .setDomain(CoreMetrics.DOMAIN_SIZE)
+      .create();
 
   public List<Metric> getMetrics() {
     return Arrays.asList(
-      USELESS_DUPLICATED_LINES,
-      TOTAL_USELESS_LINES,
-      DEAD_CODE,
-      POTENTIAL_DEAD_CODE,
-      TEMP_METHOD_LINES);
+        USELESS_DUPLICATED_LINES,
+        TOTAL_USELESS_LINES,
+        DEAD_CODE,
+        POTENTIAL_DEAD_CODE,
+        TEMP_METHOD_LINES);
   }
+
 }

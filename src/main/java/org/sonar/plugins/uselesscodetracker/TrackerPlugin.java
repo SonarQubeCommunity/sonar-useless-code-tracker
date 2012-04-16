@@ -20,40 +20,23 @@
 
 package org.sonar.plugins.uselesscodetracker;
 
-import org.sonar.api.Extension;
-import org.sonar.api.Plugin;
-import org.sonar.api.Properties;
+import org.sonar.api.SonarPlugin;
 import org.sonar.plugins.uselesscodetracker.decorator.*;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-@Properties({
-})
-public class TrackerPlugin implements Plugin {
+public class TrackerPlugin extends SonarPlugin {
 
-  public String getKey() {
-    return "useless-code-tracker";
+  public List getExtensions() {
+    return Arrays.asList(
+        TrackerMetrics.class,
+        TempMethodLinesDecorator.class,
+        TrackerWidget.class,
+        TotalDecorator.class,
+        ViolationsDecorator.class,
+        DuplicationsDecorator.class,
+        DeadCodeDecorator.class);
   }
 
-  public String getName() {
-    return "Useless Code Tracker";
-  }
-
-  public String getDescription() {
-    return "Reports on source code that can be reduced.";
-  }
-
-  public List<Class<? extends Extension>> getExtensions() {
-    List<Class<? extends Extension>> list = new ArrayList<Class<? extends Extension>>();
-    list.add(TrackerMetrics.class);
-    list.add(TempMethodLinesDecorator.class);
-    list.add(TrackerWidget.class);
-    list.add(TotalDecorator.class);
-    list.add(ViolationsDecorator.class);
-    list.add(DuplicationsDecorator.class);
-    list.add(DeadCodeDecorator.class);
-
-    return list;
-  }
 }

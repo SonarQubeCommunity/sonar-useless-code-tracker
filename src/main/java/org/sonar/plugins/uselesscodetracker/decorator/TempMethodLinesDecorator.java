@@ -33,14 +33,12 @@ import org.sonar.plugins.uselesscodetracker.TrackerMetrics;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class TempMethodLinesDecorator implements Decorator {
 
   @DependedUpon
   public List<Metric> dependedUpon() {
     return Arrays.asList(TrackerMetrics.TEMP_METHOD_LINES);
   }
-
 
   public void decorate(Resource resource, DecoratorContext context) {
     if (resource instanceof JavaMethod) {
@@ -51,7 +49,6 @@ public class TempMethodLinesDecorator implements Decorator {
       computeDistributionFromChildren(context);
     }
   }
-
 
   protected void computeDistributionFromChildren(DecoratorContext context) {
     CountDistributionBuilder builder = new CountDistributionBuilder(TrackerMetrics.TEMP_METHOD_LINES);
