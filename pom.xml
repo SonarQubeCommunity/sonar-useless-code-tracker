@@ -11,7 +11,7 @@
 
   <artifactId>sonar-useless-code-tracker-plugin</artifactId>
   <packaging>sonar-plugin</packaging>
-  <version>0.5</version>
+  <version>0.6-SNAPSHOT</version>
 
   <name>Sonar Useless Code Tracker Plugin</name>
   <description>Reports on source code that can be reduced.</description>
@@ -41,9 +41,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/sonar-plugins/tags/sonar-useless-code-tracker-plugin-0.5</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/sonar-plugins/tags/sonar-useless-code-tracker-plugin-0.5</developerConnection>
-    <url>scm:svn:https://svn.codehaus.org/sonar-plugins/tags/sonar-useless-code-tracker-plugin-0.5</url>
+    <connection>scm:svn:http://svn.codehaus.org/sonar-plugins/trunk/useless-code-tracker</connection>
+    <developerConnection>scm:svn:https://svn.codehaus.org/sonar-plugins/trunk/useless-code-tracker</developerConnection>
+    <url>http://svn.codehaus.org/sonar-plugins</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
