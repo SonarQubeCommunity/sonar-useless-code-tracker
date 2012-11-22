@@ -34,6 +34,6 @@ public class TrackerWidget extends AbstractRubyTemplate implements RubyRailsWidg
 
   @Override
   protected String getTemplatePath() {
-    return "/org/sonar/plugins/uselesscodetracker/tracker.erb";
+    return "/org/sonar/plugins/uselesscodetracker/widget.html.erb";
   }
 }

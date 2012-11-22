@@ -17,22 +17,20 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package org.sonar.plugins.uselesscodetracker;
 
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.Assertions.assertThat;
 
 public class TrackerWidgetTest {
 
   @Test
   public void testWidgetDefinition() {
     TrackerWidget widget = new TrackerWidget();
-    assertThat(widget.getId(), notNullValue());
-    assertThat(widget.getTitle(), notNullValue());
-    assertThat(getClass().getResource(widget.getTemplatePath()), notNullValue());
+    assertThat(widget.getId()).isNotEmpty();
+    assertThat(widget.getTitle()).isNotEmpty();
+    assertThat(getClass().getResource(widget.getTemplatePath())).isNotNull();
   }
 
 }

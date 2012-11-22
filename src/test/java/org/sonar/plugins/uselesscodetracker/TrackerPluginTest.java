@@ -17,19 +17,17 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package org.sonar.plugins.uselesscodetracker;
 
-import static org.hamcrest.Matchers.greaterThan;
-import static org.junit.Assert.assertThat;
-
 import org.junit.Test;
+
+import static org.fest.assertions.Assertions.assertThat;
 
 public class TrackerPluginTest {
 
   @Test
   public void testGetExtensions() {
-    assertThat(new TrackerPlugin().getExtensions().size(), greaterThan(0));
+    assertThat(new TrackerPlugin().getExtensions()).hasSize(7);
   }
 
 }
