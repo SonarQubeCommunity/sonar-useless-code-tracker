@@ -7,11 +7,11 @@
     <tr>
       <td valign="top">
         <div class="dashbox">
-          <p class="title">Useless Code</p>
-          <p><span class="big"><%= format_measure(useless_code)%></span><%= tendency_icon('total-useless-lines') %></p>
-          <p><%= format_measure(measure('useless-duplicated-lines'), :suffix => ' lines in duplications',:url => url_for_drilldown('duplicated_lines'), :default => '0 duplicated')%><%= tendency_icon('useless-duplicated-lines') %></p>
-          <p><%= format_measure(measure('dead-code'), :suffix => ' lines in unused private methods',:url => url_for_drilldown('dead-code'), :default => '0 lines in unused private methods')%><%= tendency_icon('dead-code') %></p>
-          <p><%= format_measure(measure('potential-dead-code'), :suffix => ' lines in unused protected methods',:url => url_for_drilldown('potential-dead-code'), :default => '0 lines in unused protected methods')%><%= tendency_icon('potential-dead-code') %></p>
+          <p class="title"><%= message('widget.useless-code-tracker.name') %></p>
+          <p><span class="big"><%= format_measure(useless_code) -%></span><%= tendency_icon('total-useless-lines') -%></p>          
+          <p><%= format_measure( 'useless-duplicated-lines', :suffix => ' ' + message('widget.useless-code-tracker.duplicated-lines.suffix'), :url => url_for_drilldown('duplicated_lines'), :default => message('widget.useless-code-tracker.duplicated-lines.default')) -%><%= tendency_icon('useless-duplicated-lines') -%></p>
+          <p><%= format_measure( 'dead-code' , :suffix => ' ' + message('widget.useless-code-tracker.dead-code.suffix'), :url => url_for_drilldown('dead-code'), :default => message('widget.useless-code-tracker.dead-code.default')) -%><%= tendency_icon('dead-code') -%></p>
+          <p><%= format_measure( 'potential-dead-code', :suffix => ' ' + message('widget.useless-code-tracker.potential-dead-code.suffix'), :url => url_for_drilldown('potential-dead-code'), :default =>  message('widget.useless-code-tracker.potential-dead-code.default')) -%><%= tendency_icon('potential-dead-code') -%></p>
         </div>
       </td>
       <td valign="top">
