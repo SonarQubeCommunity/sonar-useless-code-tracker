@@ -41,9 +41,9 @@
   </developers>
 
   <scm>
-    <connection>scm:svn:http://svn.codehaus.org/sonar-plugins/trunk/useless-code-tracker</connection>
-    <developerConnection>scm:svn:https://svn.codehaus.org/sonar-plugins/trunk/useless-code-tracker</developerConnection>
-    <url>http://svn.codehaus.org/sonar-plugins</url>
+    <connection>scm:git:git@github.com:SonarSource/sonar-useless-code-tracker.git</connection>
+    <developerConnection>scm:git:git@github.com:SonarSource/sonar-useless-code-tracker.git</developerConnection>
+    <url>https://github.com/Sonarcommunity/sonar-useless-code-tracker</url>
   </scm>
   <issueManagement>
     <system>JIRA</system>
