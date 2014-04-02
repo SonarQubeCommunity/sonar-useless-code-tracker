@@ -39,7 +39,7 @@ public class TotalDecorator implements Decorator {
 
   @DependsUpon
   public List<Metric> dependsUpon() {
-    return Arrays.asList(TrackerMetrics.USELESS_DUPLICATED_LINES, TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE);
+    return Arrays.asList(TrackerMetrics.USELESS_DUPLICATED_LINES);
   }
 
   @DependedUpon
@@ -47,22 +47,20 @@ public class TotalDecorator implements Decorator {
     return Arrays.asList(TrackerMetrics.TOTAL_USELESS_LINES);
   }
 
+  @Override
   public void decorate(Resource resource, DecoratorContext context) {
     if (!ResourceUtils.isFile(resource) && !ResourceUtils.isPackage(resource)) {
       double lines = 0.0;
       Measure duplicated = context.getMeasure(TrackerMetrics.USELESS_DUPLICATED_LINES);
-      Measure deadCode = context.getMeasure(TrackerMetrics.DEAD_CODE);
-      Measure potentialDeadCode = context.getMeasure(TrackerMetrics.POTENTIAL_DEAD_CODE);
 
-      if (duplicated != null || deadCode != null || potentialDeadCode != null) {
+      if (duplicated != null ) {
         lines += MeasureUtils.getValue(duplicated, 0.0);
-        lines += MeasureUtils.getValue(deadCode, 0.0);
-        lines += MeasureUtils.getValue(potentialDeadCode, 0.0);
         context.saveMeasure(TrackerMetrics.TOTAL_USELESS_LINES, lines);
       }
     }
   }
   
+  @Override
   public boolean shouldExecuteOnProject(Project project) {
     return true;
   }

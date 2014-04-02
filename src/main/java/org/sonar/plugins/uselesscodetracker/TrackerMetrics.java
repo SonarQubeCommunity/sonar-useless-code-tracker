@@ -38,24 +38,6 @@ public class TrackerMetrics implements Metrics {
       .setDomain(CoreMetrics.DOMAIN_DUPLICATION)
       .create();
 
-  public static final Metric DEAD_CODE = new Metric.Builder("dead-code", "Dead Code", Metric.ValueType.INT)
-      .setDescription("Code that is not used and could be removed")
-      .setDirection(Metric.DIRECTION_WORST)
-      .setQualitative(false)
-      .setBestValue(0.0)
-      .setOptimizedBestValue(true)
-      .setDomain(CoreMetrics.DOMAIN_RULES)
-      .create();
-
-  public static final Metric POTENTIAL_DEAD_CODE = new Metric.Builder("potential-dead-code", "Potential Dead Code", Metric.ValueType.INT)
-      .setDescription("Code that is potentially not used and could be removed")
-      .setDirection(Metric.DIRECTION_WORST)
-      .setQualitative(false)
-      .setBestValue(0.0)
-      .setOptimizedBestValue(true)
-      .setDomain(CoreMetrics.DOMAIN_RULES)
-      .create();
-
   public static final Metric TOTAL_USELESS_LINES = new Metric.Builder("total-useless-lines", "Total Useless Code", Metric.ValueType.INT)
       .setDescription("Number of lines that can be reduced")
       .setDirection(Metric.DIRECTION_WORST)
@@ -75,8 +57,6 @@ public class TrackerMetrics implements Metrics {
     return Arrays.asList(
         USELESS_DUPLICATED_LINES,
         TOTAL_USELESS_LINES,
-        DEAD_CODE,
-        POTENTIAL_DEAD_CODE,
         TEMP_METHOD_LINES);
   }
 

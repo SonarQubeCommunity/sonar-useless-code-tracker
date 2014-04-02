@@ -34,9 +34,7 @@ public class TrackerPlugin extends SonarPlugin {
         TempMethodLinesDecorator.class,
         TrackerWidget.class,
         TotalDecorator.class,
-        ViolationsDecorator.class,
-        DuplicationsDecorator.class,
-        DeadCodeDecorator.class);
+        DuplicationsDecorator.class);
   }
 
 }

@@ -54,7 +54,7 @@ public class TotalDecoratorTest {
   @Test
   public void dependencies() {
     assertThat(decorator.dependedUpon(), hasItem(TrackerMetrics.TOTAL_USELESS_LINES));
-    assertThat(decorator.dependsUpon(), hasItems(TrackerMetrics.USELESS_DUPLICATED_LINES, TrackerMetrics.DEAD_CODE, TrackerMetrics.POTENTIAL_DEAD_CODE));
+    assertThat(decorator.dependsUpon(), hasItems(TrackerMetrics.USELESS_DUPLICATED_LINES));
   }
 
   @Test
@@ -70,8 +70,6 @@ public class TotalDecoratorTest {
   public void shouldDecorate() {
     when(resource.getScope()).thenReturn(Scopes.PROJECT);
     when(context.getMeasure(TrackerMetrics.USELESS_DUPLICATED_LINES)).thenReturn(new Measure(TrackerMetrics.USELESS_DUPLICATED_LINES, 1.0));
-    when(context.getMeasure(TrackerMetrics.DEAD_CODE)).thenReturn(new Measure(TrackerMetrics.DEAD_CODE, 2.0));
-    when(context.getMeasure(TrackerMetrics.POTENTIAL_DEAD_CODE)).thenReturn(new Measure(TrackerMetrics.POTENTIAL_DEAD_CODE, 3.0));
     decorator.decorate(resource, context);
     verify(context).saveMeasure(TrackerMetrics.TOTAL_USELESS_LINES, 6.0);
   }
