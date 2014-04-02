@@ -71,7 +71,7 @@ public class TotalDecoratorTest {
     when(resource.getScope()).thenReturn(Scopes.PROJECT);
     when(context.getMeasure(TrackerMetrics.USELESS_DUPLICATED_LINES)).thenReturn(new Measure(TrackerMetrics.USELESS_DUPLICATED_LINES, 1.0));
     decorator.decorate(resource, context);
-    verify(context).saveMeasure(TrackerMetrics.TOTAL_USELESS_LINES, 6.0);
+    verify(context).saveMeasure(TrackerMetrics.TOTAL_USELESS_LINES, 1.0);
   }
 
   @Test

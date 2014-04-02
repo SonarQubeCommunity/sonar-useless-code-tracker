@@ -27,7 +27,7 @@ public class TrackerMetricsTest {
 
   @Test
   public void testGetMetrics() {
-    assertThat(new TrackerMetrics().getMetrics()).hasSize(5);
+    assertThat(new TrackerMetrics().getMetrics()).hasSize(3);
   }
 
 }
