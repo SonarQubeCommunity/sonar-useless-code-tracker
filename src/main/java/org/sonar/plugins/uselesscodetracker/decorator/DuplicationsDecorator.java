@@ -46,17 +46,26 @@ import java.io.StringReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.sonar.api.config.Settings;
+import org.sonar.plugins.uselesscodetracker.TrackerPlugin;
 
 /**
- * Calculates number of duplicated lines that could be reduced.
- * Strategy is following: first block inside first occurrence of group survives, others can be removed.
- * Should be noted that implemented algorithm depends on order of traversal of resources
- * and on order of blocks within group.
+ * Calculates number of duplicated lines that could be reduced. Strategy is
+ * following: first block inside first occurrence of group survives, others can
+ * be removed. Should be noted that implemented algorithm depends on order of
+ * traversal of resources and on order of blocks within group.
  */
 public class DuplicationsDecorator implements Decorator {
 
+  private final Settings settings;
+
+  public DuplicationsDecorator(Settings settings) {
+    this.settings = settings;
+  }
+
+  @Override
   public boolean shouldExecuteOnProject(Project project) {
-    return true;
+    return settings.getBoolean(TrackerPlugin.ENABLED);
   }
 
   @DependedUpon
@@ -66,16 +75,17 @@ public class DuplicationsDecorator implements Decorator {
 
   private Set<String> processedResources = Sets.newHashSet();
 
+  @Override
   public void decorate(Resource resource, DecoratorContext context) {
     double uselessDuplicatedLines = 0;
 
     Measure measure = context.getMeasure(CoreMetrics.DUPLICATIONS_DATA);
     if (MeasureUtils.hasData(measure)) {
       String resourceKey = new StringBuilder(ResourceModel.KEY_SIZE)
-          .append(context.getProject().getKey())
-          .append(':')
-          .append(context.getResource().getKey())
-          .toString();
+              .append(context.getProject().getKey())
+              .append(':')
+              .append(context.getResource().getKey())
+              .toString();
       List<List<Block>> groups = parseDuplicationData(measure.getData());
       uselessDuplicatedLines = analyse(groups, resourceKey);
     }
@@ -101,7 +111,8 @@ public class DuplicationsDecorator implements Decorator {
   }
 
   /**
-   * @param first true if this is a first occurrence of this group, in this case first block should survive
+   * @param first true if this is a first occurrence of this group, in this case
+   * first block should survive
    */
   private int count(List<Block> group, String currentResourceKey, Set<Integer> linesToRemove, boolean first) {
     int result = 0;
@@ -122,9 +133,10 @@ public class DuplicationsDecorator implements Decorator {
   }
 
   /**
-   * If at least one of resources from this group was processed, then this is not a first occurrence of this group.
-   * This is due to the fact that if duplication group (A, B) was detected for resource A,
-   * then duplication group (B, A) should be detected for resource B.
+   * If at least one of resources from this group was processed, then this is
+   * not a first occurrence of this group. This is due to the fact that if
+   * duplication group (A, B) was detected for resource A, then duplication
+   * group (B, A) should be detected for resource B.
    */
   private boolean isFirstOccurrence(List<Block> group) {
     for (Block block : group) {
@@ -137,6 +149,7 @@ public class DuplicationsDecorator implements Decorator {
 
   @VisibleForTesting
   static class Block {
+
     final String resourceKey;
     final int s;
     final int e;

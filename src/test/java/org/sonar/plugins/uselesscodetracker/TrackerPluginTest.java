@@ -27,7 +27,7 @@ public class TrackerPluginTest {
 
   @Test
   public void testGetExtensions() {
-    assertThat(new TrackerPlugin().getExtensions()).hasSize(5);
+    assertThat(new TrackerPlugin().getExtensions()).hasSize(6);
   }
 
 }

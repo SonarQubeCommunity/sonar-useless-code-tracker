@@ -32,20 +32,33 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import org.mockito.Mockito;
+import org.sonar.api.config.Settings;
+import org.sonar.plugins.uselesscodetracker.TrackerPlugin;
 
 public class DuplicationsDecoratorTest {
 
   private DuplicationsDecorator decorator;
-
+  private Settings settings;
+  
   @Before
   public void setUp() {
-    decorator = new DuplicationsDecorator();
+    settings = Mockito.mock(Settings.class);
+    Mockito.when(settings.getBoolean(TrackerPlugin.ENABLED)).thenReturn(Boolean.TRUE);
+    decorator = new DuplicationsDecorator(settings);
   }
 
   @Test
-  public void shouldExecuteOnAnyProject() {
+  public void shouldExecuteWhenEnabled() {
     Project project = new Project("key");
     assertThat(decorator.shouldExecuteOnProject(project), is(true));
+  }
+
+  @Test
+  public void shouldNotExecuteWhenDisabled() {
+    Project project = new Project("key");
+    Mockito.when(settings.getBoolean(TrackerPlugin.ENABLED)).thenReturn(Boolean.FALSE);
+    assertThat(decorator.shouldExecuteOnProject(project), is(false));
   }
 
   @Test

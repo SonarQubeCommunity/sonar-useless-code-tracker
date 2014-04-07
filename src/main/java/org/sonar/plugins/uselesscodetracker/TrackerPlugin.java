@@ -17,24 +17,43 @@
  * License along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02
  */
-
 package org.sonar.plugins.uselesscodetracker;
 
+import com.google.common.collect.ImmutableList;
 import org.sonar.api.SonarPlugin;
 import org.sonar.plugins.uselesscodetracker.decorator.*;
 
-import java.util.Arrays;
 import java.util.List;
+import org.sonar.api.PropertyType;
+import org.sonar.api.config.PropertyDefinition;
+import org.sonar.api.resources.Qualifiers;
 
 public class TrackerPlugin extends SonarPlugin {
 
+  public static final String ENABLED_DEFAULT = "true";
+  public static final String TRACKER_CATEGORY = "Useless Code Tracker";
+  public static final String COMMON_SUBCATEGORY = "General";
+  public static final String ENABLED = "sonar.useless-code-tracker.enabled";
+
+  @Override
   public List getExtensions() {
-    return Arrays.asList(
-        TrackerMetrics.class,
-        TempMethodLinesDecorator.class,
-        TrackerWidget.class,
-        TotalDecorator.class,
-        DuplicationsDecorator.class);
+
+    return ImmutableList.of(
+            PropertyDefinition.builder(ENABLED).
+            defaultValue(ENABLED_DEFAULT).
+            name("Activation of Useless code tracker plugin").
+            description("This property can be set to false in order to deactivate the Useless code tracker plugin.").
+            index(0).
+            onQualifiers(Qualifiers.PROJECT).
+            category(TRACKER_CATEGORY).
+            subCategory(COMMON_SUBCATEGORY).
+            type(PropertyType.BOOLEAN).
+            build(),
+            TrackerMetrics.class,
+            TempMethodLinesDecorator.class,
+            TrackerWidget.class,
+            TotalDecorator.class,
+            DuplicationsDecorator.class);
   }
 
 }
