@@ -45,8 +45,8 @@
   </developers>
 
   <scm>
-    <connection>scm:git:git@github.com:SonarSource/sonar-useless-code-tracker.git</connection>
-    <developerConnection>scm:git:git@github.com:SonarSource/sonar-useless-code-tracker.git</developerConnection>
+    <connection>scm:git:git@github.com:SonarCommunity/sonar-useless-code-tracker.git</connection>
+    <developerConnection>scm:git:git@github.com:SonarCommunity/sonar-useless-code-tracker.git</developerConnection>
     <url>https://github.com/Sonarcommunity/sonar-useless-code-tracker</url>
   </scm>
   <issueManagement>
