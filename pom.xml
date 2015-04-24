@@ -15,7 +15,7 @@
 
   <name>Sonar Useless Code Tracker Plugin</name>
   <description>Reports on source code that can be reduced.</description>
-  <url>http://docs.codehaus.org/display/SONAR/Useless+Code+Tracker+Plugin</url>
+  <url>http://redirect.sonarsource.com/plugins/uselesscodetracker.html</url>
   <inceptionYear>2010</inceptionYear>
   <organization>
     <name>SonarSource</name>
